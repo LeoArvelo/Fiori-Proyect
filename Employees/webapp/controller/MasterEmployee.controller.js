@@ -17,30 +17,10 @@ sap.ui.define([
 	function (Controller, JSONModel, Filter, FilterOperator, MessageToast) {
 		"use strict";
 
-		return Controller.extend("logaligroup.Employees.controller.MainView", {
+		return Controller.extend("logaligroup.Employees.controller.MasterEmployee", {
 			onInit: function () {
                 
-                var oView = this.getView();
-
-                var oJsonModelEmployees = new JSONModel();
-                oJsonModelEmployees.loadData("./localService/mockdata/Employees.json", false);
-                oView.setModel(oJsonModelEmployees, "JsonEmployees");
-
-                var oJsonModelCountries = new JSONModel();
-                oJsonModelCountries.loadData("./localService/mockdata/Countries.json", false)
-                oView.setModel(oJsonModelCountries, "JsonCountries");
-
-                var oJsonModelConfig = new JSONModel({
-                    visibleID : true,
-                    visibleName : true,
-                    visibleCountry : true,
-                    visibleCity : false,
-                    visibleBtnShowCity : true,
-                    visibleBtnHideCity : false
-
-                });
-
-                oView.setModel(oJsonModelConfig,"JsonConfig");
+               this._bus = sap.ui.getCore().getEventBus();
 
 			},
 
@@ -109,6 +89,12 @@ sap.ui.define([
 
             onCloseOrders:function(){
                 this._oDialogOrders.close();
+            },
+
+            showEmployee: function(oEvent){
+                var path= oEvent.getSource().getBindingContext("JsonEmployees").getPath();
+                this._bus.publish("flexible", "showEmployee", path);
+
             }
             // chequeaba que la longitud de los caracteres 
             // en el elemento imput fueran de al menos 6 caracteres
