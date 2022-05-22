@@ -94,7 +94,78 @@ sap.ui.define([
             },
 
             ShowOrders : function (oEvent){
-                var ordersTable = this.getView().byId("OrdersTable");
+                var iconPressed = oEvent.getSource();
+                var oContext = iconPressed.getBindingContext("JsonEmployees");
+
+                if(!this._oDialogOrders){
+                this._oDialogOrders = sap.ui.xmlfragment("logaligroup.Employees.fragment.DialogOrders", this);
+                this.getView().addDependent(this._oDialogOrders);
+                };
+
+                this._oDialogOrders.bindElement("JsonEmployees>" + oContext.getPath())
+                this._oDialogOrders.open();
+
+            },
+
+            onCloseOrders:function(){
+                this._oDialogOrders.close();
+            }
+            // chequeaba que la longitud de los caracteres 
+            // en el elemento imput fueran de al menos 6 caracteres
+            // onValidate: function(){
+            //     var inputEmployee= this.byId("imputEmployee");
+            //     var valueEmployee = inputEmployee.getValue();
+            //     var varSelectionLabel = this.byId("labelCountry");
+            //     var varSelection = this.byId("slCountry");
+            //     if (valueEmployee.length === 6){
+            //         //varSelectionLabel.Tog
+            //         varSelectionLabel.setVisible(true);
+            //         varSelection.setVisible(true);
+            //     }else {
+            //        // inputEmployee.setDescription("Not Ok");
+            //        varSelectionLabel.setVisible(false);
+            //        varSelection.setVisible(false);
+            //     }
+            // }
+		});
+	});
+
+ //var i18Bundle = oView.getModel("i18n").getResourceBundle();
+
+                // var oJSON = {
+                //     employeeId : "12345",
+                //     countryKey: "UK",
+                //     listCountry: [
+                //         {
+                //             key:"US",
+                //             text: i18Bundle.getText("CountryUS")
+                //         },
+
+                //         {
+                //             key:"UK",
+                //             text: i18Bundle.getText("CountryUK")
+
+                //         },
+
+                //         {
+
+                //             key:"ES",
+                //             text: i18Bundle.getText("CountryES")
+
+                //         },
+                //         {
+
+                //             key:"PT",
+                //             text: i18Bundle.getText("CountryPT")
+
+                //         }
+                //     ]
+
+                // };
+
+                // oJsonModel.setData(oJSON);
+
+                /*  var ordersTable = this.getView().byId("OrdersTable");
                 ordersTable.destroyItems();
 
                 var itemPressed = oEvent.getSource();
@@ -167,59 +238,4 @@ sap.ui.define([
 
                 newTableJson.bindAggregation("items", oBindingInfo);
                 newTableJson.bindElement("JsonEmployees>" + oContext.getPath());
-                ordersTable.addItem(newTableJson);
-            }
-            // chequeaba que la longitud de los caracteres 
-            // en el elemento imput fueran de al menos 6 caracteres
-            // onValidate: function(){
-            //     var inputEmployee= this.byId("imputEmployee");
-            //     var valueEmployee = inputEmployee.getValue();
-            //     var varSelectionLabel = this.byId("labelCountry");
-            //     var varSelection = this.byId("slCountry");
-            //     if (valueEmployee.length === 6){
-            //         //varSelectionLabel.Tog
-            //         varSelectionLabel.setVisible(true);
-            //         varSelection.setVisible(true);
-            //     }else {
-            //        // inputEmployee.setDescription("Not Ok");
-            //        varSelectionLabel.setVisible(false);
-            //        varSelection.setVisible(false);
-            //     }
-            // }
-		});
-	});
-
- //var i18Bundle = oView.getModel("i18n").getResourceBundle();
-
-                // var oJSON = {
-                //     employeeId : "12345",
-                //     countryKey: "UK",
-                //     listCountry: [
-                //         {
-                //             key:"US",
-                //             text: i18Bundle.getText("CountryUS")
-                //         },
-
-                //         {
-                //             key:"UK",
-                //             text: i18Bundle.getText("CountryUK")
-
-                //         },
-
-                //         {
-
-                //             key:"ES",
-                //             text: i18Bundle.getText("CountryES")
-
-                //         },
-                //         {
-
-                //             key:"PT",
-                //             text: i18Bundle.getText("CountryPT")
-
-                //         }
-                //     ]
-
-                // };
-
-                // oJsonModel.setData(oJSON);
+                ordersTable.addItem(newTableJson);*/
