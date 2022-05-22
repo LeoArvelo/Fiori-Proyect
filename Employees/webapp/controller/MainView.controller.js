@@ -19,9 +19,177 @@ sap.ui.define([
 
 		return Controller.extend("logaligroup.Employees.controller.MainView", {
 			onInit: function () {
-                var oJsonModel = new JSONModel();
+                
                 var oView = this.getView();
-                var i18Bundle = oView.getModel("i18n").getResourceBundle();
+
+                var oJsonModelEmployees = new JSONModel();
+                oJsonModelEmployees.loadData("./localService/mockdata/Employees.json", false);
+                oView.setModel(oJsonModelEmployees, "JsonEmployees");
+
+                var oJsonModelCountries = new JSONModel();
+                oJsonModelCountries.loadData("./localService/mockdata/Countries.json", false)
+                oView.setModel(oJsonModelCountries, "JsonCountries");
+
+                var oJsonModelConfig = new JSONModel({
+                    visibleID : true,
+                    visibleName : true,
+                    visibleCountry : true,
+                    visibleCity : false,
+                    visibleBtnShowCity : true,
+                    visibleBtnHideCity : false
+
+                });
+
+                oView.setModel(oJsonModelConfig,"JsonConfig");
+
+			},
+
+            onFilter: function(){
+                var oJSONCountries = this.getView().getModel("JsonCountries").getData();
+                var filters = [];
+
+                if(oJSONCountries.EmployeeIdgeneral !== ""){
+                    filters.push(new Filter("EmployeeID",FilterOperator.EQ, oJSONCountries.EmployeeIdgeneral))
+
+                }
+                if(oJSONCountries.CountryKey !== ""){
+                    filters.push(new Filter("Country",FilterOperator.EQ, oJSONCountries.CountryKey))
+
+                }
+
+                var oList = this.getView().byId("tableEmployee");
+                var oBinding = oList.getBinding("items");
+                oBinding.filter(filters);
+            },
+
+
+            onClearFilter: function(){
+                var oModel= this.getView().getModel("JsonCountries");
+                oModel.setProperty("/EmployeeIdgeneral", "");
+                oModel.setProperty("/CountryKey", "");
+               
+            },
+
+            onShowPostalCode: function (oEvent){
+                var itemPressed = oEvent.getSource();
+                var oContext = itemPressed.getBindingContext("JsonEmployees");
+                var ObjectContext = oContext.getObject();
+
+                MessageToast.show(ObjectContext.PostalCode);
+
+            },
+            ShowCity: function (){
+                var oModel= this.getView().getModel("JsonConfig");
+                oModel.setProperty("/visibleCity", true);
+                oModel.setProperty("/visibleBtnShowCity", false);
+                oModel.setProperty("/visibleBtnHideCity", true);
+
+            },
+            HideCity : function (){
+                var oModel= this.getView().getModel("JsonConfig");
+                oModel.setProperty("/visibleCity", false);
+                oModel.setProperty("/visibleBtnShowCity", true);
+                oModel.setProperty("/visibleBtnHideCity", false);
+
+            },
+
+            ShowOrders : function (oEvent){
+                var ordersTable = this.getView().byId("OrdersTable");
+                ordersTable.destroyItems();
+
+                var itemPressed = oEvent.getSource();
+                var oContext = itemPressed.getBindingContext("JsonEmployees");
+                var ObjectContext = oContext.getObject();
+                var orders = ObjectContext.Orders;
+                var ordersItems = [];
+
+                for (var i in orders){
+                    ordersItems.push(new sap.m.ColumnListItem({
+                        cells : [
+                            new sap.m.Label({text: orders[i].OrderID}),
+                            new sap.m.Label({text: orders[i].Freight}),
+                            new sap.m.Label({text: orders[i].ShipAddress})
+                        ]
+                    }));
+                }
+                var newTable= new sap.m.Table({
+                    width : "auto",
+                    columns: [
+                        new sap.m.Column ({header : new sap.m.Label({text : "{i18n>orderID}"})}),
+                        new sap.m.Column ({header : new sap.m.Label({text : "{i18n>freight}"})}),
+                        new sap.m.Column ({header : new sap.m.Label({text : "{i18n>shipAddress}"})})
+                    ],
+                    items : ordersItems
+                }).addStyleClass("sapUiSmallMarginEnd");
+                ordersTable.addItem(newTable);
+
+                var newTableJson = new sap.m.Table();
+                newTableJson.addStyleClass("sapUiSmallMargin");
+                newTableJson.setWidth("auto");
+
+                var columnOrderID = new sap.m.Column();
+                var labelOrderID = new sap.m.Label();
+                labelOrderID.bindProperty("text", "i18n>orderID");
+                columnOrderID.setHeader(labelOrderID);
+                newTableJson.addColumn(columnOrderID);
+
+                var columnFreight= new sap.m.Column();
+                var labelFreight = new sap.m.Label();
+                labelFreight.bindProperty("text", "i18n>freight");
+                columnFreight.setHeader(labelFreight);
+                newTableJson.addColumn(columnFreight);
+
+                var columnShipAddress = new sap.m.Column();
+                var labelShipAddress = new sap.m.Label();
+                labelShipAddress.bindProperty("text", "i18n>shipAddress");
+                columnShipAddress.setHeader(labelShipAddress);
+                newTableJson.addColumn(columnShipAddress);
+
+                var columnListItem = new sap.m.ColumnListItem();
+
+                var cellOrderID = new sap.m.Label();
+                cellOrderID.bindProperty("text", "JsonEmployees>OrderID");
+                columnListItem.addCell(cellOrderID);
+
+                var cellFreight = new sap.m.Label();
+                cellFreight.bindProperty("text", "JsonEmployees>Freight");
+                columnListItem.addCell(cellFreight);
+
+                var cellShipAddress = new sap.m.Label();
+                cellShipAddress.bindProperty("text", "JsonEmployees>ShipAddress");
+                columnListItem.addCell(cellShipAddress);
+
+                var oBindingInfo = {
+                    model : "JsonEmployees",
+                    path : "Orders",
+                    template : columnListItem
+                };
+
+                newTableJson.bindAggregation("items", oBindingInfo);
+                newTableJson.bindElement("JsonEmployees>" + oContext.getPath());
+                ordersTable.addItem(newTableJson);
+            }
+            // chequeaba que la longitud de los caracteres 
+            // en el elemento imput fueran de al menos 6 caracteres
+            // onValidate: function(){
+            //     var inputEmployee= this.byId("imputEmployee");
+            //     var valueEmployee = inputEmployee.getValue();
+            //     var varSelectionLabel = this.byId("labelCountry");
+            //     var varSelection = this.byId("slCountry");
+            //     if (valueEmployee.length === 6){
+            //         //varSelectionLabel.Tog
+            //         varSelectionLabel.setVisible(true);
+            //         varSelection.setVisible(true);
+            //     }else {
+            //        // inputEmployee.setDescription("Not Ok");
+            //        varSelectionLabel.setVisible(false);
+            //        varSelection.setVisible(false);
+            //     }
+            // }
+		});
+	});
+
+ //var i18Bundle = oView.getModel("i18n").getResourceBundle();
 
                 // var oJSON = {
                 //     employeeId : "12345",
@@ -55,61 +223,3 @@ sap.ui.define([
                 // };
 
                 // oJsonModel.setData(oJSON);
-                oJsonModel.loadData("./localService/mockdata/Employees.json", false);
-                oView.setModel(oJsonModel);
-
-
-			},
-
-            onFilter: function(){
-                var oJSON = this.getView().getModel().getData();
-                var filters = [];
-
-                if(oJSON.EmployeeIdgeneral !== ""){
-                    filters.push(new Filter("EmployeeID",FilterOperator.EQ, oJSON.EmployeeIdgeneral))
-
-                }
-                if(oJSON.CountryKey !== ""){
-                    filters.push(new Filter("Country",FilterOperator.EQ, oJSON.CountryKey))
-
-                }
-
-                var oList = this.getView().byId("tableEmployee");
-                var oBinding = oList.getBinding("items");
-                oBinding.filter(filters);
-            },
-
-
-            onClearFilter: function(){
-                var oModel= this.getView().getModel();
-                oModel.setProperty("/EmployeeIdgeneral", "");
-                oModel.setProperty("/CountryKey", "");
-               
-            },
-
-            onShowPostalCode: function (oEvent){
-                var itemPressed = oEvent.getSource();
-                var oContext = itemPressed.getBindingContext();
-                var ObjectContext = oContext.getObject();
-
-                MessageToast.show(ObjectContext.PostalCode);
-
-            }
-
-            // onValidate: function(){
-            //     var inputEmployee= this.byId("imputEmployee");
-            //     var valueEmployee = inputEmployee.getValue();
-            //     var varSelectionLabel = this.byId("labelCountry");
-            //     var varSelection = this.byId("slCountry");
-            //     if (valueEmployee.length === 6){
-            //         //varSelectionLabel.Tog
-            //         varSelectionLabel.setVisible(true);
-            //         varSelection.setVisible(true);
-            //     }else {
-            //        // inputEmployee.setDescription("Not Ok");
-            //        varSelectionLabel.setVisible(false);
-            //        varSelection.setVisible(false);
-            //     }
-            // }
-		});
-	});
