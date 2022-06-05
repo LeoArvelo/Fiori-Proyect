@@ -13,7 +13,7 @@
                 visible="{JsonConfig>/visibleBtnHideCity}"
                 class="sapUiSmallMarginEnd" />
 
-            <Table id="tableEmployee" items="{JsonEmployees>/Employees}">
+            <Table id="tableEmployee" items="{odataNorthwind>/Employees}">
                 <columns>
                     <Column visible="{JsonConfig>/visibleID}">
                         <header> 
@@ -44,10 +44,10 @@
                 <items>
                     <ColumnListItem type="Navigation" press="showEmployee">
                         <cells>
-                            <Label text="{JsonEmployees>EmployeeID}"/>
-                            <Label text="{JsonEmployees>LastName} , {JsonEmployees>FirstName}"/>
-                            <Label text="{JsonEmployees>Country}" />
-                            <Label text="{JsonEmployees>City}"/>
+                            <Label text="{odataNorthwind>EmployeeID}"/>
+                            <Label text="{odataNorthwind>LastName} , {odataNorthwind>FirstName}"/>
+                            <Label text="{odataNorthwind>Country}" />
+                            <Label text="{odataNorthwind>City}"/>
                             <core:Icon src="sap-icon://show" press="ShowOrders"></core:Icon>
                         </cells>
                     </ColumnListItem>

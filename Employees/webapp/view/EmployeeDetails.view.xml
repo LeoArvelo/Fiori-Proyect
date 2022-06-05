@@ -50,5 +50,17 @@
             </items>
         </FlexBox>
     </Panel>
+    <Panel class="sapUiSizeCompact" backgroundDesign="Transparent">
+        <headerToolbar>
+            <Toolbar >
+                <Title text="{i18n>incidence} {= ${JsonEmployees>Country} !=='US' ? ${i18n>europe} : ${i18n>us}}" />
+                <ToolbarSpacer ></ToolbarSpacer>
+                <Button text="{i18n>createincidence}" class="sapUiSmallMarginEnd" press="onCreateIncidence"/>
+            </Toolbar>
+        </headerToolbar>
+    </Panel>
+    <Panel id="tableIncidence" class="sapUiNoContentPadding" backgroundDesign="Transparent">
+    
+    </Panel>
 </Page>
 </mvc:View>
